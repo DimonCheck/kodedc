@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Защита сервера — KodeDC</title>
+    <style>
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(0, 255, 100, 0.03) 0px,
+                    rgba(0, 200, 255, 0.02) 20px,
+                    rgba(0, 255, 150, 0.03) 40px,
+                    rgba(0, 255, 200, 0.01) 60px),
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(0, 255, 100, 0.02) 2px,
+                    transparent 4px,
+                    transparent 40px),
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 100, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 150, 0.03) 0%, transparent 50%),
+                #0a0c14;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    #00ff88,
+                    #00ccff,
+                    #00ff66,
+                    transparent);
+            background-size: 300% 100%;
+            animation: neonLine 4s ease-in-out infinite;
+            z-index: 9999;
+        }
+
+        @keyframes neonLine {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(10, 12, 20, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 38px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    rgba(0, 255, 100, 0.1),
+                    rgba(0, 200, 255, 0.1),
+                    rgba(0, 255, 150, 0.1),
+                    transparent);
+            z-index: -1;
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ШАПКА ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #00ff66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.15);
+        }
+
+        .page-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #88ddbb;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            border-radius: 40px;
+            transition: 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-header .back-link:hover {
+            background: rgba(0, 255, 100, 0.06);
+            border-color: rgba(0, 255, 100, 0.4);
+            color: #ccffee;
+            transform: translateY(-2px);
+        }
+
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(0, 255, 100, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: rgba(0, 255, 100, 0.15);
+            background: rgba(0, 255, 100, 0.02);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+        }
+
+        .section p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .command {
+            background: #0d1117;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+            border-left: 3px solid #00ff88;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .config {
+            background: #0d1117;
+            padding: 1.2rem 1.5rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #ccffee;
+            border-left: 3px solid #00ccff;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 5px solid #ffc107;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ccddbb;
+        }
+
+        .warning {
+            background: rgba(220, 53, 69, 0.08);
+            border-left: 5px solid #dc3545;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ff9999;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.08);
+            border-left: 5px solid #4caf50;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #88dd99;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            color: #00ff88;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s ease;
+            backdrop-filter: blur(8px);
+            font-size: 1.2rem;
+        }
+
+        .back-to-top:hover {
+            background: rgba(0, 255, 100, 0.15);
+            border-color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ФУТЕР ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 100, 0.04);
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .footer .highlight {
+            color: #77cc99;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.2rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .section {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .command,
+            .config {
+                font-size: 0.75rem;
+            }
+        }
+
+        ::selection {
+            background: #00ff88;
+            color: #0a0c14;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== ШАПКА ===== -->
+        <header class="page-header">
+            <h1>🛡️ Первичная защита сервера</h1>
+            <!-- <a href="../KodeDC.html" class="back-link">← К оглавлению</a> -->
+        </header>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <div class="content">
+
+            <p style="color: #99aacd; margin-bottom: 1.5rem;">
+                Допустим, вы купили новый сервер. Прежде всего его нужно <strong style="color: #ccffee;">«защитить»</strong>. Вот полный список действий.
+            </p>
+
+            <div class="note">
+                <strong>💡 Важно:</strong> Если работа делается на виртуальной машине, то лучше сначала установить <strong>один адаптер — NAT</strong>.
+            </div>
+
+            <!-- 1. Проверка входов и логов SSH -->
+            <div class="section">
+                <div class="section-title">📊 1. Проверка входов и логов SSH</div>
+                <div class="command">journalctl -u ssh</div>
+                <p>Показывает все логи службы SSH.</p>
+                <div class="command">journalctl -u ssh | grep Accepted</div>
+                <p>Показывает только успешные входы по SSH.</p>
+                <div class="command">last</div>
+                <p>История последних входов пользователей в систему.</p>
+            </div>
+
+            <!-- 2. Работа с паролями и обновлениями -->
+            <div class="section">
+                <div class="section-title">🔑 2. Работа с паролями и обновлениями</div>
+                <p><strong>Создать свой новый пароль:</strong></p>
+                <div class="command">sudo passwd</div>
+                <p>Изменить пароль пользователя.</p>
+                <p><strong>Обновить список пакетов и установить обновления системы:</strong></p>
+                <div class="command">sudo apt update && sudo apt upgrade -y</div>
+            </div>
+
+            <!-- 3. Создание нового пользователя -->
+            <div class="section">
+                <div class="section-title">👤 3. Создание нового пользователя</div>
+                <div class="command">sudo useradd -m USERNAME</div>
+                <div class="command">sudo passwd USERNAME</div>
+                <div class="command">sudo usermod -aG sudo USERNAME</div>
+                <div class="command">sudo usermod -s /bin/bash USERNAME</div>
+                <div class="command">su - USERNAME</div>
+                <p>(если надо зайти в нового юзера, <strong>exit</strong> если выйти)</p>
+                <div class="note">
+                    <strong>💡 Примечание:</strong> Если вы всё таки делаете это с виртуальной машины, то пока у вас NAT кроме всего этого надо скачать <strong>iptables-persistent</strong> и <strong>fail2ban</strong>.
+                </div>
+            </div>
+
+            <!-- 4. Установка iptables-persistent -->
+            <div class="section">
+                <div class="section-title">📦 4. Установка iptables-persistent</div>
+                <div class="command">sudo apt install -y iptables-persistent</div>
+                <div class="command">curl -O http://ftp.de.debian.org/debian/pool/main/i/iptables-persistent/iptables-persistent_1.0.23_all.deb</div>
+                <div class="command">ls</div>
+                <div class="command">sudo dpkg -i iptables-persistent_1.0.23_all.deb</div>
+                <div class="command">sudo apt search netfilter-persistent</div>
+                <div class="command">curl -O http://ftp.de.debian.org/debian/pool/main/i/iptables-persistent/netfilter-persistent_1.0.23_all.deb</div>
+                <div class="command">ls</div>
+                <div class="command">sudo dpkg -i netfilter-persistent_1.0.23_all.deb</div>
+                <div class="command">sudo dpkg -i iptables-persistent_1.0.23_all.deb</div>
+                <div class="command">sudo service netfilter-persistent save</div>
+            </div>
+
+            <!-- 5. Замена NAT на intnet -->
+            <div class="section">
+                <div class="section-title">🔄 5. Замена NAT на intnet (внутренняя сеть)</div>
+                <p>Теперь заменяем NAT на intnet (внутренняя сеть) и делаем следующие пункты.</p>
+            </div>
+
+            <!-- 6. SSH-ключи -->
+            <div class="section">
+                <div class="section-title">🔐 6. SSH-ключи (вход без пароля)</div>
+                <p><strong>Настроить SSH на клиенте.</strong></p>
+                <p><strong>На сервере:</strong></p>
+                <p>Создать SSH-ключ на ПК:</p>
+                <div class="command">mkdir ~/.ssh</div>
+                <p>Создать папку для SSH-ключей:</p>
+                <div class="command">touch ~/.ssh/authorized_keys</div>
+                <p>Создать файл для публичных ключей:</p>
+                <div class="command">chmod 700 ~/.ssh</div>
+                <p>Ограничить доступ к папке SSH:</p>
+                <div class="command">chmod 600 ~/.ssh/authorized_keys</div>
+                <p>Ограничить доступ к ключам.</p>
+            </div>
+
+            <!-- 7. Базовый Firewall (iptables) -->
+            <div class="section">
+                <div class="section-title">🧱 7. Базовый Firewall (iptables)</div>
+                <p>Если скачен iptables-persistent, пишем правила:</p>
+                <div class="command">sudo iptables -A INPUT -i lo -j ACCEPT</div>
+                <div class="command">sudo iptables -A INPUT -m conntrack --ctstate RELATED,ESTABLISHED -j ACCEPT</div>
+                <div class="command">sudo iptables -A INPUT -p icmp -j ACCEPT</div>
+                <div class="command">sudo iptables -A INPUT -p tcp -m tcp --dport 22 -j ACCEPT</div>
+                <div class="command">sudo iptables -P INPUT DROP</div>
+                <div class="command">sudo iptables -P OUTPUT ACCEPT</div>
+                <div class="command">sudo iptables -P FORWARD ACCEPT</div>
+            </div>
+
+            <!-- 8. Защита от брутфорса (Fail2Ban) -->
+            <div class="section">
+                <div class="section-title">🛡️ 8. Защита от брутфорса (Fail2Ban)</div>
+                <div class="command">sudo nano /etc/fail2ban/fail.local</div>
+                <p>В этот файл вставляем базовую конфигурацию:</p>
+                <div class="config">
+[DEFAULT]
+
+# Игнорируем локальный компьютер, чтобы случайно не заблокировать себя.
+# Вместо "IP" вставьте реальный IP-адрес, который нужно исключить из блокировок.
+# Несколько адресов указываются через пробел, например: 127.0.0.1 192.168.1.100
+ignoreip = 127.0.0.1/8
+
+# Время блокировки в секундах. 1h = 3600 секунд.
+bantime = 1h
+
+# Время, за которое считаются попытки (1 час).
+findtime = 1h
+
+# Количество неудачных попыток до блокировки.
+maxretry = 5
+
+# Включаем защиту для SSH.
+
+[sshd]
+
+enabled = true
+
+port = ssh
+
+filter = sshd
+
+logpath = /var/log/auth.log
+                </div>
+                <p><strong>Перезапускаем fail2ban:</strong></p>
+                <div class="command">sudo systemctl restart fail2ban.service</div>
+                <p><strong>Проверяем статус защиты SSH:</strong></p>
+                <div class="command">sudo fail2ban-client status sshd</div>
+                <div class="success">
+                    <strong>✅ Защита сервера настроена!</strong>
+                </div>
+            </div>
+
+        </div><!-- /content -->
+
+        <!-- ===== ФУТЕР ===== -->
+        <footer class="footer">
+            <p>
+                <span class="highlight">KodeDC</span> — платформа нового поколения
+            </p>
+            <p style="margin-top: 0.4rem; color: #334155;">
+                © Дмитрий Викторов, 2026
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑</a>
+
+</body>
+
+</html>

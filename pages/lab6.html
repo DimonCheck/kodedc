@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Эстетика терминала: fastfetch + bash-алиасы — KodeDC</title>
+    <style>
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(0, 255, 100, 0.03) 0px,
+                    rgba(0, 200, 255, 0.02) 20px,
+                    rgba(0, 255, 150, 0.03) 40px,
+                    rgba(0, 255, 200, 0.01) 60px),
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(0, 255, 100, 0.02) 2px,
+                    transparent 4px,
+                    transparent 40px),
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 100, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 150, 0.03) 0%, transparent 50%),
+                #0a0c14;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    #00ff88,
+                    #00ccff,
+                    #00ff66,
+                    transparent);
+            background-size: 300% 100%;
+            animation: neonLine 4s ease-in-out infinite;
+            z-index: 9999;
+        }
+
+        @keyframes neonLine {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(10, 12, 20, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 38px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    rgba(0, 255, 100, 0.1),
+                    rgba(0, 200, 255, 0.1),
+                    rgba(0, 255, 150, 0.1),
+                    transparent);
+            z-index: -1;
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ШАПКА ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #00ff66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.15);
+        }
+
+        .page-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #88ddbb;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            border-radius: 40px;
+            transition: 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-header .back-link:hover {
+            background: rgba(0, 255, 100, 0.06);
+            border-color: rgba(0, 255, 100, 0.4);
+            color: #ccffee;
+            transform: translateY(-2px);
+        }
+
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .content>p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(0, 255, 100, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .section:hover {
+            border-color: rgba(0, 255, 100, 0.15);
+            background: rgba(0, 255, 100, 0.02);
+        }
+
+        .section-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+        }
+
+        .section p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .section ul {
+            color: #99aacd;
+            margin-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .section ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        .command {
+            background: #0d1117;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+            border-left: 3px solid #00ff88;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.2rem 1.5rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #ccffee;
+            border-left: 3px solid #00ccff;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 5px solid #ffc107;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ccddbb;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.08);
+            border-left: 5px solid #4caf50;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #88dd99;
+        }
+
+        .warning {
+            background: rgba(220, 53, 69, 0.08);
+            border-left: 5px solid #dc3545;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ff9999;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0.5rem 0;
+        }
+
+        th,
+        td {
+            padding: 0.6rem 0.8rem;
+            border: 1px solid rgba(0, 255, 100, 0.06);
+            color: #99aacd;
+            text-align: left;
+        }
+
+        th {
+            background: rgba(0, 255, 100, 0.04);
+            color: #ccffee;
+            font-weight: 600;
+        }
+
+        td code {
+            color: #88ddbb;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        details summary {
+            color: #88ddbb;
+            cursor: pointer;
+            font-weight: 600;
+            padding: 0.4rem 0;
+        }
+
+        details summary:hover {
+            color: #ccffee;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            color: #00ff88;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s ease;
+            backdrop-filter: blur(8px);
+            font-size: 1.2rem;
+        }
+
+        .back-to-top:hover {
+            background: rgba(0, 255, 100, 0.15);
+            border-color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ФУТЕР ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 100, 0.04);
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .footer .highlight {
+            color: #77cc99;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.2rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .section {
+                padding: 1.2rem;
+            }
+            table {
+                font-size: 0.85rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .command,
+            pre {
+                font-size: 0.75rem;
+            }
+        }
+
+        ::selection {
+            background: #00ff88;
+            color: #0a0c14;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== ШАПКА ===== -->
+        <header class="page-header">
+            <h1>✨ Эстетика терминала: fastfetch + bash-алиасы</h1>
+            <!--<a href="../KodeDC.html" class="back-link">← К оглавлению</a>-->
+        </header>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <div class="content">
+
+            <p>
+                Превращаем стандартный терминал Astra Linux в современную, информативную и красивую среду.
+                <br />
+                🚀 <strong style="color: #ccffee;">fastfetch</strong> — быстрая альтернатива neofetch, собранная для совместимости со старыми библиотеками (GLIBC 2.24).
+            </p>
+
+            <!-- 1. Подготовка системы -->
+            <div class="section">
+                <div class="section-title">📦 1. Подготовка системы</div>
+                <p>Устанавливаем компиляторы, <code>cmake</code>, <code>git</code> и <code>wget</code>:</p>
+                <div class="command">sudo apt update</div>
+                <div class="command">sudo apt install -y build-essential cmake git wget</div>
+                <div class="note">Эти пакеты нужны для сборки fastfetch из исходников.</div>
+            </div>
+
+            <!-- 2. Сборка fastfetch -->
+            <div class="section">
+                <div class="section-title">🔧 2. Сборка fastfetch (совместимая версия 2.28.0)</div>
+                <p>В более новых версиях fastfetch требуется GLIBC ≥ 2.33, поэтому используем проверенную 2.28.0.</p>
+                <div class="command">cd ~</div>
+                <div class="command">wget https://github.com/fastfetch-cli/fastfetch/archive/refs/tags/2.28.0.tar.gz</div>
+                <div class="command">tar -xzf 2.28.0.tar.gz</div>
+                <div class="command">cd fastfetch-2.28.0</div>
+                <div class="command">mkdir -p build && cd build</div>
+                <div class="command">cmake ..</div>
+                <div class="command">make -j$(nproc)</div>
+                <div class="command">./fastfetch</div>
+                <div class="success">✅ Если вы увидели ASCII-логотип Astra Linux — сборка успешна!</div>
+            </div>
+
+            <!-- 3. Конфигурация -->
+            <div class="section">
+                <div class="section-title">⚙️ 3. Создаём конфигурацию (без ошибок)</div>
+                <p>Конфиг исправляет старый параметр <code>keyWidth</code> → <code>key.width</code>, добавляет отступы и удобный разделитель.</p>
+                <div class="command">mkdir -p ~/.config/fastfetch</div>
+                <pre>cat > ~/.config/fastfetch/config.jsonc << 'EOF'
+{
+    "logo": {
+        "source": "auto",
+        "padding": { "top": 1, "bottom": 1 }
+    },
+    "display": {
+        "separator": "  →  ",
+        "key": { "width": 15 }
+    },
+    "modules": [
+        "os", "host", "kernel", "uptime", "packages",
+        "shell", "terminal", "cpu", "gpu", "memory", "disk", "localip", "battery"
+    ]
+}
+EOF</pre>
+                <div class="note">💡 Если часть строк обрезается — увеличьте <code>width</code> до 18 или 20.</div>
+            </div>
+
+            <!-- 4. Алиас, цвета, автозапуск -->
+            <div class="section">
+                <div class="section-title">🎨 4. Алиас, цветные переменные и автозапуск</div>
+                <p>Добавляем в <code>~/.bashrc</code> удобную команду <code>fastfetch</code>, цветовые переменные и команду для автоматического запуска.</p>
+                <pre>echo '
+# Fastfetch configuration
+alias fastfetch="~/fastfetch-2.28.0/build/fastfetch -c ~/.config/fastfetch/config.jsonc"
+export FASTFETCH_COLOR_KEYS="yellow"
+export FASTFETCH_COLOR_VALUES="green"
+export FASTFETCH_COLOR_TITLE="green"
+fastfetch
+' >> ~/.bashrc
+source ~/.bashrc</pre>
+                <div class="success">✨ Теперь при каждом открытии терминала будет запускаться fastfetch с цветами.</div>
+            </div>
+
+            <!-- 5. Блок алиасов -->
+            <div class="section">
+                <div class="section-title">🧠 5. Преображение терминала: алиасы, промпт, приветствие</div>
+                <p>Вставьте этот блок в конец <code>~/.bashrc</code> (после строк fastfetch). Никаких сторонних программ — только встроенные команды Linux.</p>
+                <details>
+                    <summary>📋 Показать полный блок с алиасами</summary>
+                    <pre># ============================================
+# КРУТЫЕ АЛИАСЫ ДЛЯ ВИЗУАЛИЗАЦИИ ТЕРМИНАЛА
+# ============================================
+
+# 1. Красивый вывод файлов
+alias ll='ls -lah --color=auto --group-directories-first'
+alias la='ls -A --color=auto'
+alias l='ls -CF --color=auto'
+alias lr='ls -lah --color=auto --group-directories-first -R'
+alias lt='ls -lat --color=auto'
+
+# 2. Цветной grep
+alias grep='grep --color=auto'
+alias egrep='egrep --color=auto'
+alias fgrep='fgrep --color=auto'
+
+# 3. Безопасные команды
+alias rm='rm -i'
+alias cp='cp -i'
+alias mv='mv -i'
+
+# 4. Системная информация
+alias mem='free -h'
+alias cpu='lscpu | grep -E "Model name|CPU\(s\)|MHz"'
+alias disk='df -h --total'
+alias storage='du -sh * 2>/dev/null | sort -h'
+alias ports='ss -tulpn 2>/dev/null'
+alias processes='ps auxf --sort=-%cpu | head -20'
+
+# 5. Сеть
+alias myip='curl -s ifconfig.me && echo ""'
+alias localip='ip -4 addr show | grep -oP "(?<=inet ).*(?=/)"'
+alias scanports='sudo nmap -sS localhost 2>/dev/null || echo "nmap не установлен"'
+
+# 6. Навигация
+alias ..='cd ..'
+alias ...='cd ../..'
+alias ....='cd ../../..'
+alias .2='cd ../..'
+alias .3='cd ../../..'
+alias -- -='cd -'
+
+# 7. Разделители
+alias line='printf "%$(tput cols)s\n"|tr " " "="'
+alias line2='printf "%$(tput cols)s\n"|tr " " "-"'
+
+# 8. Красивая шапка "sysinfo"
+alias sysinfo='echo -e "\n\033[1;36m════════════════════════════════════════════════════════\033[0m"; echo -e "\033[1;32m  SYSTEM INFORMATION\033[0m"; echo -e "\033[1;36m════════════════════════════════════════════════════════\033[0m"; echo -e "\033[1;33m»\033[0m User: \033[1;37m$USER\033[0m"; echo -e "\033[1;33m»\033[0m Host: \033[1;37m$HOSTNAME\033[0m"; echo -e "\033[1;33m»\033[0m OS: \033[1;37m$(lsb_release -ds 2>/dev/null || cat /etc/os-release 2>/dev/null | grep PRETTY_NAME | cut -d= -f2 | tr -d \")\033[0m"; echo -e "\033[1;33m»\033[0m Kernel: \033[1;37m$(uname -r)\033[0m"; echo -e "\033[1;33m»\033[0m Uptime: \033[1;37m$(uptime -p | sed "s/up //")\033[0m"; echo -e "\033[1;36m════════════════════════════════════════════════════════\033[0m\n"'
+
+# 9. Цветной промпт с веткой Git
+parse_git_branch() {
+    git branch 2>/dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
+export PS1='\[\e[1;32m\]\u\[\e[0m\]@\[\e[1;36m\]\h\[\e[0m\]:\[\e[1;34m\]\W\[\e[0m\]\[\e[1;33m\]$(parse_git_branch)\[\e[0m\]\$ '
+
+# 10. Приветствие
+echo -e "\n\033[1;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e "\033[1;36m  ДОБРО ПОЖАЛОВАТЬ, \033[1;33m$USER\033[0m"
+echo -e "\033[1;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m"
+echo -e "\033[1;32m  Дата:\033[0m \033[1;37m$(date "+%A, %d %B %Y")\033[0m"
+echo -e "\033[1;32m  Время:\033[0m \033[1;37m$(date "+%H:%M:%S")\033[0m"
+echo -e "\033[1;32m  Uptime:\033[0m \033[1;37m$(uptime -p | sed 's/up //')\033[0m"
+echo -e "\033[1;35m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\033[0m\n"</pre>
+                </details>
+                <div class="command">nano ~/.bashrc</div>
+                <div class="command"># вставить блок, сохранить (Ctrl+O, Enter, Ctrl+X)</div>
+                <div class="command">source ~/.bashrc</div>
+                <div class="success">✅ После этого терминал станет цветным, информативным и эстетичным.</div>
+            </div>
+
+            <!-- 6. Проверка -->
+            <div class="section">
+                <div class="section-title">🔍 6. Проверка работоспособности</div>
+                <p>Закройте терминал и откройте заново — вы должны увидеть:</p>
+                <ul>
+                    <li>Приветствие с датой, временем и uptime</li>
+                    <li>Логотип Astra Linux и системные параметры (fastfetch)</li>
+                    <li>Цветной промпт <code>user@host:~$</code></li>
+                    <li>Алиасы (<code>ll</code>, <code>sysinfo</code>, <code>mem</code>) работают без ошибок</li>
+                </ul>
+                <div class="success">🎉 Всё готово! Ваш терминал выглядит стильно и профессионально.</div>
+            </div>
+
+            <!-- FAQ -->
+            <div class="section">
+                <div class="section-title">❓ Частые вопросы</div>
+                <div class="note">
+                    <strong>🔹 fastfetch: команда не найдена</strong><br />
+                    Убедитесь, что алиас прописан в ~/.bashrc. Выполните <code>source ~/.bashrc</code> или перезапустите терминал.
+                </div>
+                <div class="note">
+                    <strong>🔹 Ошибка JsonConfig: Property color</strong><br />
+                    В config.jsonc не должно быть устаревшего поля <code>keyWidth</code> — используйте <code>"key": { "width": 15 }</code>.
+                </div>
+                <div class="note">
+                    <strong>🔹 Хочу убрать автозапуск fastfetch</strong><br />
+                    Закомментируйте или удалите строку <code>fastfetch</code> в конце ~/.bashrc.
+                </div>
+                <div class="warning">
+                    ⚠️ Для команд <code>myip</code> и <code>scanports</code> может потребоваться интернет или установка <code>nmap</code> / <code>curl</code> (необязательно).
+                </div>
+            </div>
+
+            <!-- Шпаргалка -->
+            <div class="section">
+                <div class="section-title">📌 Полезные команды после настройки</div>
+                <table>
+                    <thead>
+                        <tr><th>Алиас/команда</th><th>Действие</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td><code>ll</code></td><td>Подробный список файлов</td></tr>
+                        <tr><td><code>sysinfo</code></td><td>Цветная сводка по системе</td></tr>
+                        <tr><td><code>line</code></td><td>Разделитель (сплошная линия)</td></tr>
+                        <tr><td><code>..</code> / <code>...</code></td><td>Переход на папку выше</td></tr>
+                        <tr><td><code>fastfetch</code></td><td>Красивый вывод о системе</td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+        </div><!-- /content -->
+
+        <!-- ===== ФУТЕР ===== -->
+        <footer class="footer">
+            <p>
+                <span class="highlight">KodeDC</span> — платформа нового поколения
+            </p>
+            <p style="margin-top: 0.4rem; color: #334155;">
+                © Дмитрий Викторов, 2026
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑</a>
+
+</body>
+
+</html>

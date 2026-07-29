@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Основные команды AstraLinux — KodeDC</title>
+    <style>
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(0, 255, 100, 0.03) 0px,
+                    rgba(0, 200, 255, 0.02) 20px,
+                    rgba(0, 255, 150, 0.03) 40px,
+                    rgba(0, 255, 200, 0.01) 60px),
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(0, 255, 100, 0.02) 2px,
+                    transparent 4px,
+                    transparent 40px),
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 100, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 150, 0.03) 0%, transparent 50%),
+                #0a0c14;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    #00ff88,
+                    #00ccff,
+                    #00ff66,
+                    transparent);
+            background-size: 300% 100%;
+            animation: neonLine 4s ease-in-out infinite;
+            z-index: 9999;
+        }
+
+        @keyframes neonLine {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(10, 12, 20, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 38px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    rgba(0, 255, 100, 0.1),
+                    rgba(0, 200, 255, 0.1),
+                    rgba(0, 255, 150, 0.1),
+                    transparent);
+            z-index: -1;
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ШАПКА ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #00ff66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.15);
+        }
+
+        .page-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #88ddbb;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            border-radius: 40px;
+            transition: 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-header .back-link:hover {
+            background: rgba(0, 255, 100, 0.06);
+            border-color: rgba(0, 255, 100, 0.4);
+            color: #ccffee;
+            transform: translateY(-2px);
+        }
+
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .content h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #00ff88;
+            margin-bottom: 0.3rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+        }
+
+        .content h3 {
+            font-size: 1.15rem;
+            font-weight: 600;
+            color: #ccffee;
+            margin-bottom: 0.5rem;
+        }
+
+        .content p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        pre {
+            background: #0d1117;
+            padding: 1.2rem 1.5rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #ccffee;
+            border-left: 3px solid #00ccff;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        pre code {
+            color: #ccffee;
+            background: transparent;
+            padding: 0;
+        }
+
+        code {
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            color: #88ddbb;
+            background: rgba(255, 255, 255, 0.04);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            color: #00ff88;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s ease;
+            backdrop-filter: blur(8px);
+            font-size: 1.2rem;
+        }
+
+        .back-to-top:hover {
+            background: rgba(0, 255, 100, 0.15);
+            border-color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ФУТЕР ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 100, 0.04);
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .footer .highlight {
+            color: #77cc99;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.2rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            pre {
+                font-size: 0.75rem;
+            }
+        }
+
+        ::selection {
+            background: #00ff88;
+            color: #0a0c14;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== ШАПКА ===== -->
+        <header class="page-header">
+            <h1>⌨️ Основные команды AstraLinux</h1>
+            <!--<a href="../KodeDC.html" class="back-link">← К оглавлению</a>-->
+        </header>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <div class="content">
+
+            <p style="color: #99aacd; margin-bottom: 1.5rem;">
+                Базовые команды для работы в терминале AstraLinux — навигация, работа с файлами, просмотр содержимого и права доступа.
+            </p>
+
+            <h2>📌 Базовые команды для начинающих</h2>
+
+            <h3>1. Навигация по файловой системе</h3>
+            <pre><code>pwd          # показать текущую директорию
+ls           # список файлов и папок
+ls -la       # подробный список (включая скрытые)
+cd /путь     # перейти в директорию
+cd ..        # перейти на уровень выше
+cd ~         # перейти в домашнюю папку</code></pre>
+
+            <h3>2. Работа с файлами и папками</h3>
+            <pre><code>touch file.txt        # создать файл
+mkdir folder          # создать папку
+cp source dest        # копировать
+mv source dest        # переместить/переименовать
+rm file.txt           # удалить файл
+rm -rf folder         # удалить папку рекурсивно</code></pre>
+
+            <h3>3. Просмотр содержимого файлов</h3>
+            <pre><code>cat file.txt          # показать содержимое
+less file.txt         # постраничный просмотр
+head -n 10 file.txt   # первые 10 строк
+tail -n 10 file.txt   # последние 10 строк</code></pre>
+
+            <h3>4. Права доступа</h3>
+            <pre><code>chmod 755 script.sh   # изменить права
+chown user:group file # изменить владельца</code></pre>
+
+        </div><!-- /content -->
+
+        <!-- ===== ФУТЕР ===== -->
+        <footer class="footer">
+            <p>
+                <span class="highlight">KodeDC</span> — платформа нового поколения
+            </p>
+            <p style="margin-top: 0.4rem; color: #334155;">
+                © Дмитрий Викторов, 2026
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑</a>
+
+</body>
+
+</html>

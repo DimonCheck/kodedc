@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Как сделать постоянный IP адрес — KodeDC</title>
+    <style>
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(0, 255, 100, 0.03) 0px,
+                    rgba(0, 200, 255, 0.02) 20px,
+                    rgba(0, 255, 150, 0.03) 40px,
+                    rgba(0, 255, 200, 0.01) 60px),
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(0, 255, 100, 0.02) 2px,
+                    transparent 4px,
+                    transparent 40px),
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 100, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 150, 0.03) 0%, transparent 50%),
+                #0a0c14;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    #00ff88,
+                    #00ccff,
+                    #00ff66,
+                    transparent);
+            background-size: 300% 100%;
+            animation: neonLine 4s ease-in-out infinite;
+            z-index: 9999;
+        }
+
+        @keyframes neonLine {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(10, 12, 20, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 38px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    rgba(0, 255, 100, 0.1),
+                    rgba(0, 200, 255, 0.1),
+                    rgba(0, 255, 150, 0.1),
+                    transparent);
+            z-index: -1;
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ШАПКА ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #00ff66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.15);
+        }
+
+        .page-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #88ddbb;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            border-radius: 40px;
+            transition: 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-header .back-link:hover {
+            background: rgba(0, 255, 100, 0.06);
+            border-color: rgba(0, 255, 100, 0.4);
+            color: #ccffee;
+            transform: translateY(-2px);
+        }
+
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .vm-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(0, 255, 100, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .vm-section:hover {
+            border-color: rgba(0, 255, 100, 0.15);
+            background: rgba(0, 255, 100, 0.02);
+        }
+
+        .vm-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+        }
+
+        .vm-section p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .vm-section h3 {
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: #ccffee;
+            margin: 1rem 0 0.5rem 0;
+        }
+
+        .vm-section ul {
+            color: #99aacd;
+            margin-left: 1.5rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .vm-section ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        .command {
+            background: #0d1117;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+            border-left: 3px solid #00ff88;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .network-config {
+            background: #0d1117;
+            padding: 1.2rem 1.5rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            color: #ccffee;
+            border-left: 3px solid #00ccff;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 5px solid #ffc107;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ccddbb;
+        }
+
+        .warning {
+            background: rgba(220, 53, 69, 0.08);
+            border-left: 5px solid #dc3545;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ff9999;
+        }
+
+        .check-list {
+            background: rgba(76, 175, 80, 0.08);
+            border-left: 5px solid #4caf50;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #88dd99;
+        }
+
+        .check-list ul {
+            color: #88dd99;
+            margin-left: 1.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .check-list ul li {
+            margin-bottom: 0.3rem;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            color: #00ff88;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s ease;
+            backdrop-filter: blur(8px);
+            font-size: 1.2rem;
+        }
+
+        .back-to-top:hover {
+            background: rgba(0, 255, 100, 0.15);
+            border-color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ФУТЕР ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 100, 0.04);
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .footer .highlight {
+            color: #77cc99;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.2rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .vm-section {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .command,
+            .network-config {
+                font-size: 0.75rem;
+            }
+        }
+
+        ::selection {
+            background: #00ff88;
+            color: #0a0c14;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== ШАПКА ===== -->
+        <header class="page-header">
+            <h1>🌐 Настройка сетевого взаимодействия между двумя виртуальными машинами</h1>
+            <!--<a href="../KodeDC.html" class="back-link">← К оглавлению</a>-->
+        </header>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <div class="content">
+
+            <p style="color: #99aacd; margin-bottom: 1.5rem;">
+                Пошаговая инструкция по настройке внутренней сети между сервером и клиентом в VirtualBox.
+            </p>
+
+            <!-- Схема сети -->
+            <div class="note">
+                <strong>📡 Схема сети:</strong><br />
+                <strong>Сервер:</strong> 2 сетевых адаптера (NAT + Внутренняя сеть) → IP: 192.168.1.7<br />
+                <strong>Клиент:</strong> 1 сетевой адаптер (Внутренняя сеть) → IP: 192.168.1.8<br />
+                <strong>Шлюз:</strong> 192.168.1.1
+            </div>
+
+            <!-- ШАГ 1 -->
+            <div class="vm-section">
+                <div class="vm-title">🖥️ Шаг 1: Настройка виртуальных машин в VirtualBox</div>
+                <h3>Сервер (Server):</h3>
+                <ul>
+                    <li><strong>Адаптер 1:</strong> NAT (для выхода в интернет)</li>
+                    <li><strong>Адаптер 2:</strong> Внутренняя сеть (для связи с клиентом)</li>
+                </ul>
+                <h3>Клиент (Client):</h3>
+                <ul>
+                    <li><strong>Адаптер 1:</strong> Внутренняя сеть (для связи с сервером)</li>
+                </ul>
+                <div class="warning">
+                    <strong>⚠️ Важно:</strong> Убедитесь, что на обеих машинах для «Внутренней сети» указано <strong>одинаковое имя сети</strong> (например, «intnet»).
+                </div>
+            </div>
+
+            <!-- ШАГ 2 -->
+            <div class="vm-section">
+                <div class="vm-title">🖥️ Шаг 2: Настройка сети на СЕРВЕРЕ</div>
+                <p>Откройте файл конфигурации сетевых интерфейсов:</p>
+                <div class="command">sudo nano /etc/network/interfaces</div>
+                <p>Вставьте в файл следующие строки:</p>
+                <div class="network-config">
+allow-hotplug eth0
+iface eth0 inet dhcp
+
+auto eth1
+iface eth1 inet static
+    address 192.168.1.7
+    gateway 192.168.1.1
+    netmask 255.255.255.0
+    broadcast 192.168.1.255
+                </div>
+                <p><strong>Сохраните файл:</strong> Ctrl+X → Y → Enter</p>
+                <p>Активируйте новые настройки командой:</p>
+                <div class="command">sudo service networking restart</div>
+                <p>Проверьте, появился ли IP-адрес <strong>192.168.1.7</strong>:</p>
+                <div class="command">ip addr show eth1</div>
+                <div class="note">
+                    <strong>🔄 Рекомендация:</strong> После настройки желательно <strong>перезагрузить машину</strong>. Для этого нажмите на кнопку завершения работы и выберите <strong>«Перезагрузка»</strong>.
+                </div>
+            </div>
+
+            <!-- ШАГ 3 -->
+            <div class="vm-section">
+                <div class="vm-title">🖥️ Шаг 3: Настройка сети на КЛИЕНТЕ</div>
+                <p>Откройте файл конфигурации сетевых интерфейсов:</p>
+                <div class="command">sudo nano /etc/network/interfaces</div>
+                <p>Вставьте в файл следующие строки:</p>
+                <div class="network-config">
+auto eth0
+iface eth0 inet static
+    address 192.168.1.8
+    gateway 192.168.1.1
+    netmask 255.255.255.0
+    broadcast 192.168.1.255
+                </div>
+                <p><strong>Сохраните файл:</strong> Ctrl+X → Y → Enter</p>
+                <p>Активируйте новые настройки командой:</p>
+                <div class="command">sudo service networking restart</div>
+                <p>Проверьте, появился ли IP-адрес <strong>192.168.1.8</strong>:</p>
+                <div class="command">ip addr show eth0</div>
+                <div class="note">
+                    <strong>🔄 Рекомендация:</strong> После настройки желательно <strong>перезагрузить машину</strong>. Для этого нажмите на кнопку завершения работы и выберите <strong>«Перезагрузка»</strong>.
+                </div>
+            </div>
+
+            <!-- ШАГ 4 -->
+            <div class="vm-section">
+                <div class="vm-title">✅ Шаг 4: Проверка связи между машинами</div>
+                <p>С сервера (192.168.1.7) проверьте доступность клиента:</p>
+                <div class="command">ping 192.168.1.8</div>
+                <p>С клиента (192.168.1.8) проверьте доступность сервера:</p>
+                <div class="command">ping 192.168.1.7</div>
+                <div class="check-list">
+                    <strong>✅ Если пинг проходит (есть ответы):</strong><br />
+                    Сеть настроена правильно! Можете переходить к следующему этапу (обмен файлами, SSH и т.д.).
+                    <br /><br />
+                    <strong>❌ Если пинг НЕ проходит:</strong>
+                    <ul>
+                        <li>Проверьте, что на обеих машинах указано одинаковое имя «Внутренней сети» в VirtualBox</li>
+                        <li>Проверьте правильность написания IP-адресов в файлах</li>
+                        <li>Убедитесь, что после перезагрузки IP-адреса сохранились (команда <code>ip addr</code>)</li>
+                        <li>Проверьте, что файервол (iptables) не блокирует ICMP-запросы</li>
+                    </ul>
+                </div>
+            </div>
+
+        </div><!-- /content -->
+
+        <!-- ===== ФУТЕР ===== -->
+        <footer class="footer">
+            <p>
+                <span class="highlight">KodeDC</span> — платформа нового поколения
+            </p>
+            <p style="margin-top: 0.4rem; color: #334155;">
+                © Дмитрий Викторов, 2026
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑</a>
+
+</body>
+
+</html>

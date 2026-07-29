@@ -1,0 +1,460 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Как скачать SL, BEAV и другие программы — KodeDC</title>
+    <style>
+        /* ===== ГЛОБАЛЬНЫЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: #0a0c14;
+            color: #e2e8f0;
+            min-height: 100vh;
+            padding: 1.5rem;
+            background-image:
+                repeating-linear-gradient(90deg,
+                    rgba(0, 255, 100, 0.03) 0px,
+                    rgba(0, 200, 255, 0.02) 20px,
+                    rgba(0, 255, 150, 0.03) 40px,
+                    rgba(0, 255, 200, 0.01) 60px),
+                repeating-linear-gradient(0deg,
+                    rgba(255, 255, 255, 0.01) 0px,
+                    rgba(0, 255, 100, 0.02) 2px,
+                    transparent 4px,
+                    transparent 40px),
+                radial-gradient(circle at 15% 20%, rgba(0, 255, 100, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 200, 255, 0.06) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 255, 150, 0.03) 0%, transparent 50%),
+                #0a0c14;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    #00ff88,
+                    #00ccff,
+                    #00ff66,
+                    transparent);
+            background-size: 300% 100%;
+            animation: neonLine 4s ease-in-out infinite;
+            z-index: 9999;
+        }
+
+        @keyframes neonLine {
+
+            0%,
+            100% {
+                background-position: 0% 0%;
+            }
+            50% {
+                background-position: 100% 0%;
+            }
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(10, 12, 20, 0.75);
+            backdrop-filter: blur(8px);
+            border-radius: 36px;
+            padding: 2rem 2.5rem;
+            border: 1px solid rgba(0, 255, 100, 0.15);
+            box-shadow: 0 0 60px rgba(0, 255, 100, 0.04);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            border-radius: 38px;
+            background: conic-gradient(from 0deg,
+                    transparent,
+                    rgba(0, 255, 100, 0.1),
+                    rgba(0, 200, 255, 0.1),
+                    rgba(0, 255, 150, 0.1),
+                    transparent);
+            z-index: -1;
+            animation: rotateBorder 8s linear infinite;
+        }
+
+        @keyframes rotateBorder {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ===== ШАПКА ===== */
+        .page-header {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            padding: 1rem 0 1.5rem 0;
+            border-bottom: 1px solid rgba(0, 255, 100, 0.08);
+            margin-bottom: 2rem;
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #00ff88, #00ccff, #00ff66);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-shadow: 0 0 40px rgba(0, 255, 100, 0.15);
+        }
+
+        .page-header .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #88ddbb;
+            text-decoration: none;
+            padding: 0.5rem 1.2rem;
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            border-radius: 40px;
+            transition: 0.25s ease;
+            font-size: 0.9rem;
+        }
+
+        .page-header .back-link:hover {
+            background: rgba(0, 255, 100, 0.06);
+            border-color: rgba(0, 255, 100, 0.4);
+            color: #ccffee;
+            transform: translateY(-2px);
+        }
+
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .tool-section {
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            border: 1px solid rgba(0, 255, 100, 0.06);
+            transition: 0.3s ease;
+        }
+
+        .tool-section:hover {
+            border-color: rgba(0, 255, 100, 0.15);
+            background: rgba(0, 255, 100, 0.02);
+        }
+
+        .tool-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #00ff88;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 0 20px rgba(0, 255, 100, 0.05);
+        }
+
+        .tool-section p {
+            color: #99aacd;
+            line-height: 1.6;
+            margin-bottom: 0.8rem;
+        }
+
+        .command {
+            background: #0d1117;
+            padding: 1rem 1.2rem;
+            border-radius: 14px;
+            font-family: 'JetBrains Mono', 'Fira Code', monospace;
+            font-size: 0.9rem;
+            color: #00ff88;
+            border-left: 3px solid #00ff88;
+            overflow-x: auto;
+            margin: 0.5rem 0 1rem 0;
+        }
+
+        .note {
+            background: rgba(255, 193, 7, 0.08);
+            border-left: 5px solid #ffc107;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #ccddbb;
+        }
+
+        .note code {
+            color: #88ddbb;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+        }
+
+        .success {
+            background: rgba(76, 175, 80, 0.08);
+            border-left: 5px solid #4caf50;
+            padding: 1rem 1.2rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            color: #88dd99;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px solid rgba(0, 255, 100, 0.06);
+            margin: 0.5rem 0;
+        }
+
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background: rgba(0, 255, 100, 0.1);
+            border: 1px solid rgba(0, 255, 100, 0.2);
+            color: #00ff88;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: 0.3s ease;
+            backdrop-filter: blur(8px);
+            font-size: 1.2rem;
+        }
+
+        .back-to-top:hover {
+            background: rgba(0, 255, 100, 0.15);
+            border-color: #00ff88;
+            transform: translateY(-3px);
+        }
+
+        /* ===== ФУТЕР ===== */
+        .footer {
+            margin-top: 3rem;
+            padding: 1.5rem;
+            text-align: center;
+            border-top: 1px solid rgba(0, 255, 100, 0.04);
+            color: #445566;
+            font-size: 0.9rem;
+        }
+
+        .footer .highlight {
+            color: #77cc99;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1.2rem;
+            }
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.8rem;
+            }
+            .page-header h1 {
+                font-size: 1.6rem;
+            }
+            .tool-section {
+                padding: 1.2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 0.8rem;
+            }
+            .container {
+                padding: 1rem;
+            }
+            .command {
+                font-size: 0.75rem;
+            }
+        }
+
+        ::selection {
+            background: #00ff88;
+            color: #0a0c14;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <!-- ===== ШАПКА ===== -->
+        <header class="page-header">
+            <h1>📦 iptables-persistent и установка программ через прокси</h1>
+            <!--<a href="../KodeDC.html" class="back-link">← К оглавлению</a>-->
+        </header>
+
+        <!-- ===== КОНТЕНТ ===== -->
+        <div class="content">
+
+            <p style="color: #99aacd; margin-bottom: 1.5rem;">
+                Инструкция по установке iptables-persistent для сохранения правил iptables после перезагрузки, а также по установке программ SL, BEAV и других через прокси.
+            </p>
+
+            <!-- iptables-persistent -->
+            <div class="tool-section">
+                <div class="tool-title">🔒 iptables-persistent (сохранение правил iptables)</div>
+                <p><strong>Установка iptables-persistent:</strong></p>
+                <div class="command">sudo apt install -y iptables-persistent</div>
+                <p><strong>Скачивание deb-пакетов вручную (если нужно):</strong></p>
+                <div class="command">curl -O http://ftp.de.debian.org/debian/pool/main/i/iptables-persistent/iptables-persistent_1.0.23_all.deb</div>
+                <div class="command">ls</div>
+                <div class="command">sudo dpkg -i iptables-persistent_1.0.23_all.deb</div>
+                <p><strong>Поиск пакета netfilter-persistent:</strong></p>
+                <div class="command">sudo apt search netfilter-persistent</div>
+                <p><strong>Скачивание и установка netfilter-persistent:</strong></p>
+                <div class="command">curl -O http://ftp.de.debian.org/debian/pool/main/i/iptables-persistent/netfilter-persistent_1.0.23_all.deb</div>
+                <div class="command">ls</div>
+                <div class="command">sudo dpkg -i netfilter-persistent_1.0.23_all.deb</div>
+                <div class="command">sudo dpkg -i iptables-persistent_1.0.23_all.deb</div>
+                <p><strong>Сохранение текущих правил iptables:</strong></p>
+                <div class="command">sudo service netfilter-persistent save</div>
+                <div class="note">
+                    <strong>💡 Примечание:</strong> iptables-persistent сохраняет правила iptables в файлы:<br />
+                    <code>/etc/iptables/rules.v4</code> — для IPv4<br />
+                    <code>/etc/iptables/rules.v6</code> — для IPv6<br />
+                    После перезагрузки правила восстанавливаются автоматически.
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Steam Locomotive (SL) -->
+            <div class="tool-section">
+                <div class="tool-title">🚂 Steam Locomotive (SL)</div>
+                <p><strong>Настройка прокси для терминала:</strong></p>
+                <div class="command">export http_proxy="http://proxy.novsu.ru:8080"</div>
+                <div class="command">export https_proxy="https://proxy.novsu.ru:8080"</div>
+                <p><strong>Настройка прокси для apt:</strong></p>
+                <div class="command">sudo nano /etc/apt/apt.conf</div>
+                <p>Прописываем эти две строки:</p>
+                <div class="command">Acquire::http::Proxy "http://proxy.novsu.ru:8080/";</div>
+                <div class="command">Acquire::https::Proxy "https://proxy.novsu.ru:8080/";</div>
+                <p><strong>Прописываем репозиторий:</strong></p>
+                <div class="command">sudo nano /etc/apt/sources.list</div>
+                <p>Пишем это:</p>
+                <div class="command">deb [trusted=yes] http://archive.debian.org/debian stretch main contrib non-free</div>
+                <p><strong>Обновляем список пакетов (выдаст ошибку):</strong></p>
+                <div class="command">sudo apt update -o</div>
+                <p><strong>Пишем это (игнорируем проверку даты):</strong></p>
+                <div class="command">sudo apt update -o Acquire::Check-Valid-Until=false</div>
+                <div class="command">sudo apt update</div>
+                <p><strong>Скачиваем sl:</strong></p>
+                <div class="command">sudo apt install sl</div>
+                <div class="success">
+                    <strong>✅ Все должно скачаться!</strong>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- BEAV -->
+            <div class="tool-section">
+                <div class="tool-title">🦫 BEAV (Binary Editor And Viewer)</div>
+                <p><strong>Настройка прокси для терминала:</strong></p>
+                <div class="command">export http_proxy="http://proxy.novsu.ru:8080"</div>
+                <div class="command">export https_proxy="https://proxy.novsu.ru:8080"</div>
+                <p><strong>Настройка прокси для apt:</strong></p>
+                <div class="command">sudo nano /etc/apt/apt.conf</div>
+                <p>Прописываем эти две строки:</p>
+                <div class="command">Acquire::http::Proxy "http://proxy.novsu.ru:8080/";</div>
+                <div class="command">Acquire::https::Proxy "https://proxy.novsu.ru:8080/";</div>
+                <p><strong>Прописываем репозиторий:</strong></p>
+                <div class="command">sudo nano /etc/apt/sources.list</div>
+                <p>Пишем это:</p>
+                <div class="command">deb [trusted=yes] http://archive.debian.org/debian stretch main contrib non-free</div>
+                <p><strong>Обновляем список пакетов (выдаст ошибку):</strong></p>
+                <div class="command">sudo apt update -o</div>
+                <p><strong>Пишем это (игнорируем проверку даты):</strong></p>
+                <div class="command">sudo apt update -o Acquire::Check-Valid-Until=false</div>
+                <div class="command">sudo apt update</div>
+                <p><strong>Скачиваем beav:</strong></p>
+                <div class="command">sudo apt install beav</div>
+                <div class="success">
+                    <strong>✅ Все должно скачаться!</strong>
+                </div>
+            </div>
+
+            <hr />
+
+            <!-- Установщик для многих программ -->
+            <div class="tool-section">
+                <div class="tool-title">📥 Установщик для многих программ</div>
+                <p><strong>Настройка прокси для терминала:</strong></p>
+                <div class="command">export http_proxy="http://proxy.novsu.ru:8080"</div>
+                <div class="command">export https_proxy="https://proxy.novsu.ru:8080"</div>
+                <p><strong>Настройка прокси для apt:</strong></p>
+                <div class="command">sudo nano /etc/apt/apt.conf</div>
+                <p>Прописываем эти две строки:</p>
+                <div class="command">Acquire::http::Proxy "http://proxy.novsu.ru:8080/";</div>
+                <div class="command">Acquire::https::Proxy "https://proxy.novsu.ru:8080/";</div>
+                <p><strong>Прописываем репозиторий:</strong></p>
+                <div class="command">sudo nano /etc/apt/sources.list</div>
+                <p>Пишем это:</p>
+                <div class="command">deb [trusted=yes] http://archive.debian.org/debian stretch main contrib non-free</div>
+                <p><strong>Обновляем список пакетов (выдаст ошибку):</strong></p>
+                <div class="command">sudo apt update -o</div>
+                <p><strong>Пишем это (игнорируем проверку даты):</strong></p>
+                <div class="command">sudo apt update -o Acquire::Check-Valid-Until=false</div>
+                <div class="command">sudo apt update</div>
+                <p><strong>Скачиваем программу (вместо "название программы" подставляем нужное):</strong></p>
+                <div class="command">sudo apt install (название программы)</div>
+                <div class="success">
+                    <strong>✅ Все должно скачаться!</strong>
+                </div>
+                <div class="note">
+                    <strong>💡 Примеры установки программ:</strong><br />
+                    <code>sudo apt install sl</code> — паровозик<br />
+                    <code>sudo apt install beav</code> — бинарный редактор<br />
+                    <code>sudo apt install htop</code> — монитор процессов<br />
+                    <code>sudo apt install mc</code> — файловый менеджер Midnight Commander<br />
+                    <code>sudo apt install curl</code> — утилита для передачи данных
+                </div>
+            </div>
+
+        </div><!-- /content -->
+
+        <!-- ===== ФУТЕР ===== -->
+        <footer class="footer">
+            <p>
+                <span class="highlight">KodeDC</span> — платформа нового поколения
+            </p>
+            <p style="margin-top: 0.4rem; color: #334155;">
+                © Дмитрий Викторов, 2026
+            </p>
+        </footer>
+
+    </div><!-- /container -->
+
+    <a href="#" class="back-to-top" onclick="window.scrollTo({top:0,behavior:'smooth'}); return false;">↑</a>
+
+</body>
+
+</html>
