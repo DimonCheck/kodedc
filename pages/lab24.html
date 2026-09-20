@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Первый этап: минималистичный образ — KodeDC</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            padding: 2.5rem 1.5rem;
+            display: flex;
+            justify-content: center;
+            background-image:
+                radial-gradient(circle at 20% 30%, rgba(180, 20, 20, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 70%, rgba(200, 50, 50, 0.03) 0%, transparent 40%);
+        }
+
+        .container {
+            max-width: 1000px;
+            width: 100%;
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(6px);
+            border-radius: 28px;
+            padding: 2.5rem 3rem;
+            border: 1px solid rgba(200, 30, 30, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+        }
+
+        /* ===== ШАПКА ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid rgba(200, 30, 30, 0.12);
+            padding-bottom: 1.2rem;
+            margin-bottom: 2rem;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+        .logo span {
+            color: #cc2233;
+        }
+
+        .badge {
+            background: rgba(200, 30, 30, 0.1);
+            border: 1px solid rgba(200, 30, 30, 0.2);
+            border-radius: 40px;
+            padding: 0.35rem 1.3rem;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #cc2233;
+        }
+
+        /* ===== ЗАГОЛОВОК ===== */
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            letter-spacing: -0.3px;
+        }
+        h1 span {
+            color: #cc2233;
+        }
+
+        .subtitle {
+            color: #888;
+            font-size: 1rem;
+            margin-bottom: 2.2rem;
+            border-left: 3px solid #cc2233;
+            padding-left: 1rem;
+            line-height: 1.6;
+        }
+
+        /* ===== СЕКЦИИ ===== */
+        .section {
+            margin-bottom: 2.2rem;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            margin-bottom: 1rem;
+            color: #f0f0f0;
+        }
+        .section-title .icon {
+            font-size: 1.4rem;
+        }
+
+        p {
+            color: #b0b0b0;
+            line-height: 1.7;
+            margin-bottom: 0.8rem;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 1rem;
+        }
+        ul li {
+            color: #b0b0b0;
+            padding: 0.35rem 0 0.35rem 1.5rem;
+            position: relative;
+            line-height: 1.6;
+        }
+        ul li::before {
+            content: "◆";
+            color: #cc2233;
+            font-size: 0.6rem;
+            position: absolute;
+            left: 0;
+            top: 0.65rem;
+        }
+
+        /* ===== БЛОКИ КОДА ===== */
+        .code-block {
+            background: #0d0d0d;
+            border: 1px solid #1e1e1e;
+            border-radius: 14px;
+            padding: 1.2rem 1.5rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem;
+            overflow-x: auto;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+            word-break: break-word;
+            line-height: 1.6;
+            margin: 0.8rem 0 1rem 0;
+        }
+        .code-block .cmd {
+            color: #cc2233;
+        }
+        .code-block .comment {
+            color: #666;
+            font-style: italic;
+        }
+        .code-block .path {
+            color: #e6b450;
+        }
+
+        /* ===== БЛОКИ ПРЕДУПРЕЖДЕНИЙ ===== */
+        .note {
+            background: rgba(200, 30, 30, 0.05);
+            border-left: 4px solid #cc2233;
+            border-radius: 10px;
+            padding: 1rem 1.3rem;
+            margin: 1rem 0;
+            color: #bbb;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .note strong {
+            color: #cc2233;
+        }
+
+        .success {
+            background: rgba(43, 122, 98, 0.06);
+            border-left: 4px solid #2b7a62;
+            border-radius: 10px;
+            padding: 1rem 1.3rem;
+            margin: 1rem 0;
+            color: #b0b0b0;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        .success strong {
+            color: #2b7a62;
+        }
+
+        /* ===== КАРТОЧКИ ===== */
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 1.2rem;
+            margin-top: 1rem;
+        }
+        .card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(200, 30, 30, 0.1);
+            border-radius: 16px;
+            padding: 1.2rem 1.3rem;
+            transition: all 0.2s ease;
+        }
+        .card:hover {
+            border-color: rgba(200, 30, 30, 0.3);
+            transform: translateY(-3px);
+        }
+        .card h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+            color: #e8e8e8;
+        }
+        .card p {
+            font-size: 0.88rem;
+            color: #888;
+            margin: 0;
+        }
+
+        /* ===== КНОПКА НАЗАД ===== */
+        .back-link {
+            display: inline-block;
+            margin-top: 2.5rem;
+            color: #cc2233;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: opacity 0.2s;
+        }
+        .back-link:hover {
+            opacity: 0.7;
+        }
+
+        /* ===== АДАПТИВ ===== */
+        @media (max-width: 700px) {
+            .container {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .logo {
+                font-size: 1.5rem;
+            }
+            .code-block {
+                font-size: 0.75rem;
+                padding: 1rem;
+            }
+            .cards {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ===== ШАПКА ===== -->
+    <div class="header">
+        <div class="logo">Kode<span>DC</span></div>
+        <div class="badge">Этап 1 · Buildroot</div>
+    </div>
+
+    <!-- ===== ЗАГОЛОВОК ===== -->
+    <h1>📦 Первый этап: <span>минималистичный образ</span></h1>
+    <p class="subtitle">
+        Собран собственный Linux-дистрибутив на базе Buildroot 2024.11.2 без графического интерфейса.
+        Готовый загрузочный образ <code>disk.img</code> (~200 МБ) проверен в QEMU и VirtualBox.
+    </p>
+
+    <!-- ===== ЧТО ВНУТРИ ===== -->
+    <div class="section">
+        <div class="section-title"><span class="icon">🧩</span> Что внутри образа</div>
+        <div class="cards">
+            <div class="card">
+                <h4>🐧 Ядро Linux</h4>
+                <p>Версия 6.1.100, собрано с нуля под x86_64.</p>
+            </div>
+            <div class="card">
+                <h4>📦 BusyBox</h4>
+                <p>Базовый набор команд: ls, cp, mv, cat, ps и ещё ~300.</p>
+            </div>
+            <div class="card">
+                <h4>🖥️ GRUB 2</h4>
+                <p>Загрузчик, установленный на FAT/ext2 раздел.</p>
+            </div>
+            <div class="card">
+                <h4>🔐 Вход в систему</h4>
+                <p>Логин: <strong>root</strong>, пароль: <strong>root</strong>.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== ЗАПУСК В QEMU ===== -->
+    <div class="section">
+        <div class="section-title"><span class="icon">🚀</span> Как запустить образ в QEMU</div>
+        <p>Быстрая проверка без VirtualBox и без флешки — прямо в терминале Astra.</p>
+        <div class="code-block">
+<span class="cmd">cd ~/buildroot-2024.11.2</span>
+<span class="cmd">qemu-system-x86_64</span> -hda disk.img -m 512
+
+<span class="comment"># Если QEMU не установлен:</span>
+<span class="cmd">sudo apt update</span>
+<span class="cmd">sudo apt install</span> qemu-system-x86
+        </div>
+        <div class="success">
+            <strong>✅ Успех:</strong> если появилось приглашение <code>login:</code> — образ работает.
+        </div>
+    </div>
+
+    <!-- ===== АЛГОРИТМ ИСПРАВЛЕНИЯ ОШИБОК ===== -->
+    <div class="section">
+        <div class="section-title"><span class="icon">🛠️</span> Алгоритм исправления ошибок</div>
+        <p>
+            В процессе сборки почти всегда возникают ошибки. Главное — не паниковать
+            и действовать по одному и тому же алгоритму:
+        </p>
+        <ul>
+            <li><strong>Прочитай последние 5–10 строк в терминале.</strong> Там почти всегда прямо написано, чего не хватает.</li>
+            <li><strong>Останови сборку</strong> (Ctrl+C), если она зависла.</li>
+            <li><strong>Определи тип проблемы:</strong>
+                <ul>
+                    <li>Файл не скачивается → скачай вручную и положи в <code>output/downloads/</code>.</li>
+                    <li>Не хватает утилиты (flex, bison, rsync) → установи через <code>sudo apt install</code>.</li>
+                    <li>Ошибка конфигурации → исправь через <code>make menuconfig</code>.</li>
+                </ul>
+            </li>
+            <li><strong>Запусти сборку снова:</strong> <code>make BR2_JLEVEL=1</code>.</li>
+            <li><strong>Повторяй цикл</strong>, пока сборка не завершится.</li>
+        </ul>
+        <div class="note">
+            <strong>💡 Важно:</strong> Buildroot <strong>никогда не начинает с нуля</strong>.
+            Всё, что уже собрано, сохраняется. После Ctrl+C и повторного <code>make</code>
+            сборка продолжится с того же места.
+        </div>
+    </div>
+
+    <!-- ===== ЧАСТЫЕ ОШИБКИ ===== -->
+    <div class="section">
+        <div class="section-title"><span class="icon">⚠️</span> Частые ошибки, которые были</div>
+        <ul>
+            <li><strong>Зависание на скачивании</strong> (wget, 0%, eta 24h) — скачать файл вручную и положить в <code>output/downloads/</code>.</li>
+            <li><strong>“command not found: flex / bison”</strong> — установить: <code>sudo apt install flex bison</code>.</li>
+            <li><strong>“Incorrect selection of kernel headers”</strong> — в <code>make menuconfig</code> → Toolchain → Kernel Headers выбрать 6.1.x.</li>
+            <li><strong>“grub-install: встраивание невозможно”</strong> — пересоздать образ с разделами через fdisk и создать ext2 для boot.</li>
+        </ul>
+        <div class="note">
+            <strong>Совет:</strong> все скачанные вручную файлы складывай в
+            <code>output/downloads/</code> — Buildroot сам их подхватит и не будет качать заново.
+        </div>
+    </div>
+
+    <!-- ===== ЧТО ДАЛЬШЕ ===== -->
+    <div class="section">
+        <div class="section-title"><span class="icon">🔭</span> Что дальше</div>
+        <ul>
+            <li>Добавить <strong>графический интерфейс</strong> через <code>make menuconfig</code> (X11 или Qt5).</li>
+            <li>Добавить <strong>Python и свои скрипты</strong> через overlay-папку.</li>
+            <li>Экспортировать готовую ВМ в <strong>OVA</strong> для переноса и защиты проекта.</li>
+        </ul>
+    </div>
+
+    <!-- ===== КНОПКА НАЗАД ===== -->
+    <a href="../index.html" class="back-link">← Вернуться на главную</a>
+
+</div>
+
+</body>
+</html>
